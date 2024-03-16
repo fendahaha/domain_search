@@ -1,6 +1,6 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import {Input, Space, Table} from 'antd';
+import {Button, DatePicker, Form, Input, Space, Table} from 'antd';
 import {frontend} from "@/utils";
 
 const columns = [
@@ -80,24 +80,35 @@ const App = () => {
             setData([]);
         }
     };
-    const onSearch = (value) => {
+
+    const [form] = Form.useForm();
+    const onFinish = (values) => {
+        values['domain_name'] = values['domain_name'] ? values['domain_name'].trim() : '';
+        values['expire_dates'] = values['expire_dates'] ? values['expire_dates'].map((_) => _.format('YYYY-MM-DD 00:00:00')) : null;
+        values['expire_dates'] = JSON.stringify(values['expire_dates']);
         setTableParams({
             ...tableParams,
             searchParams: {
                 ...tableParams.searchParams,
-                ...{'domain_name': value.trim()},
+                ...values,
             }
         });
-    }
+    };
     return (
         <Space direction={'vertical'} size={'large'} style={{'width': '100%'}}>
-            <Input.Search
-                placeholder="domainName"
-                allowClear
-                enterButton="Search"
-                size="large"
-                onSearch={onSearch}
-            />
+            <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
+                <Form.Item name="domain_name">
+                    <Input placeholder="domainName"/>
+                </Form.Item>
+                <Form.Item name="expire_dates">
+                    <DatePicker.RangePicker/>
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Search
+                    </Button>
+                </Form.Item>
+            </Form>
             <Table
                 columns={columns}
                 rowKey={(record) => record.domain.domainName}
