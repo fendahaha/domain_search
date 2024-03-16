@@ -48,7 +48,7 @@ const App = () => {
             current: 1,
             pageSize: 10,
         },
-        searchParams: {'domain_name': 'bk88.'},
+        searchParams: {'domain_name': ''},
     });
     const [editingKey, setEditingKey] = useState('');
     const isEditing = (record) => record.zone.id === editingKey;
