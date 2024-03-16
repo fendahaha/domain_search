@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     AppstoreOutlined,
     BarChartOutlined,
@@ -44,7 +44,7 @@ const items = [
     {
         key: '1',
         icon: React.createElement(UserOutlined),
-        label: `Home`,
+        label: `Dashboard`,
         path: '/admin',
     },
     {
@@ -56,16 +56,23 @@ const items = [
     {
         key: '3',
         icon: React.createElement(UploadOutlined),
-        label: `domain`,
+        label: `domains`,
         path: '/admin/domain',
     },
     {
         key: '4',
         icon: React.createElement(BarChartOutlined),
-        label: `other`,
-        path: '/',
+        label: `test`,
+        path: '/admin/test',
     },
 ]
+
+function find_path_key(path) {
+    let item = items.find((v, i) => {
+        return v['path'] === path
+    });
+    return [item?.key]
+}
 
 function go_to_page(key, router) {
     let item = items.find((v, i) => {
@@ -79,7 +86,10 @@ const App = ({children}) => {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
     let router = useRouter();
-
+    const [menu_selectedKeys, setMenu_selectedKeys] = useState(null);
+    useEffect(() => {
+        setMenu_selectedKeys(find_path_key(window.location.pathname))
+    }, [])
     return (
         <Layout hasSider>
             <Sider
@@ -93,10 +103,12 @@ const App = ({children}) => {
                 }}
             >
                 <div className="demo-logo-vertical"/>
-                <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']} items={items}
-                      onClick={(data) => {
-                          console.log(data);
-                          go_to_page(data['key'], router)
+                <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}
+                      selectedKeys={menu_selectedKeys}
+                      items={items}
+                      onClick={({item, key, keyPath, domEvent}) => {
+                          setMenu_selectedKeys(keyPath);
+                          go_to_page(key, router);
                       }}
                 />
             </Sider>
