@@ -56,7 +56,8 @@ function get(url, data = null, headers = {}) {
 
 
 export const backend = {
-    prefix: 'https://api.domainsearch.fenda',
+    // prefix: 'https://api.domainsearch.fenda',
+    prefix: 'https://domainapi.xsmng.com',
     get: function (url, data = null, headers = {}) {
         return get(this.prefix + url, data, headers)
     },
@@ -68,7 +69,8 @@ export const backend = {
     }
 }
 export const frontend = {
-    prefix: 'https://api.domainsearch.fenda',
+    // prefix: 'https://api.domainsearch.fenda',
+    prefix: 'https://domainapi.xsmng.com',
     get: function (url, data = null, headers = {}) {
         return get(this.prefix + url, data, headers)
     },
