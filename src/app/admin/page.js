@@ -139,7 +139,7 @@ export default function Page() {
                 </Row>
                 <Row gutter={16}>
                     <Col span={24}>
-                        <Card title={"未来15天即将过期域名"} bordered={false} hoverable>
+                        <Card title={"未来15天即将过期域名分布图"} bordered={false} hoverable>
                             <DomainExpiresCharts/>
                         </Card>
                     </Col>

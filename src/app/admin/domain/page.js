@@ -129,7 +129,7 @@ const App = () => {
                 <Form.Item name="domain_name">
                     <Input placeholder="domainName"/>
                 </Form.Item>
-                <Form.Item name="expire_dates">
+                <Form.Item name="expire_dates" label={'expireDate'}>
                     <DatePicker.RangePicker/>
                 </Form.Item>
                 <Form.Item>
@@ -139,7 +139,7 @@ const App = () => {
                 </Form.Item>
                 <Form.Item>
                     <Button onClick={export_data} disabled={loading}>
-                        导出
+                        Export
                     </Button>
                 </Form.Item>
             </Form>
