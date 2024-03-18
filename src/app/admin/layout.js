@@ -1,70 +1,37 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import {
-    AppstoreOutlined,
-    BarChartOutlined,
-    CloudOutlined,
-    ShopOutlined,
-    TeamOutlined,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-} from '@ant-design/icons';
+import {AntCloudOutlined, BarChartOutlined, GlobalOutlined,} from '@ant-design/icons';
 import {Layout, Menu, theme} from 'antd';
 import {useRouter} from "next/navigation";
 
 const {Header, Content, Footer, Sider} = Layout;
-// const items = [
-//     UserOutlined,
-//     VideoCameraOutlined,
-//     UploadOutlined,
-//     BarChartOutlined,
-//     CloudOutlined,
-//     AppstoreOutlined,
-//     TeamOutlined,
-//     ShopOutlined,
-// ].map((icon, index) => ({
-//     key: String(index + 1),
-//     icon: React.createElement(icon),
-//     label: `nav ${index + 1}`,
-// }));
 
-function getItem(key, label, icon, path, children, type) {
-    return {
-        key,
-        icon,
-        children,
-        label,
-        type,
-        path
-    };
-}
 
 const items = [
     {
         key: '1',
-        icon: React.createElement(UserOutlined),
+        icon: <BarChartOutlined/>,
         label: `Dashboard`,
         path: '/admin',
     },
     {
         key: '2',
-        icon: React.createElement(VideoCameraOutlined),
-        label: `cloudflare`,
+        icon: <AntCloudOutlined/>,
+        label: `Cloudflare`,
         path: '/admin/cloudflare',
     },
     {
         key: '3',
-        icon: React.createElement(UploadOutlined),
-        label: `domains`,
+        icon: <GlobalOutlined/>,
+        label: `Domains`,
         path: '/admin/domain',
     },
-    {
-        key: '4',
-        icon: React.createElement(BarChartOutlined),
-        label: `test`,
-        path: '/admin/test',
-    },
+    // {
+    //     key: '4',
+    //     icon: React.createElement(BarChartOutlined),
+    //     label: `test`,
+    //     path: '/admin/test',
+    // },
 ]
 
 function find_path_key(path) {
@@ -145,7 +112,7 @@ const App = ({children}) => {
                         textAlign: 'center',
                     }}
                 >
-                    Ant Design ©{new Date().getFullYear()} Created by Ant UED
+                    Tools ©{new Date().getFullYear()} Created by FD
                 </Footer>
             </Layout>
         </Layout>

@@ -2,6 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, DatePicker, Form, Input, Space, Table} from 'antd';
 import {frontend} from "@/utils";
+import * as XLSX from 'xlsx';
 
 const columns = [
     {
@@ -12,7 +13,14 @@ const columns = [
     {
         title: 'platform',
         dataIndex: 'platform',
-        render: (name, record) => record?.domain?.platform,
+        render: (name, record) => {
+            if (record?.domain) {
+                return <span>
+                    {record.domain.platform}<br/>
+                    ({record.domain.platformId})
+                </span>
+            }
+        },
     },
     {
         title: 'locked',
@@ -40,14 +48,14 @@ const columns = [
     },
 ];
 const App = () => {
-    const [data, setData] = useState();
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
             pageSize: 10,
         },
-        searchParams: {'domain_name': ''},
+        searchParams: {'domain_name': '', 'expire_dates': null},
     });
     const fetchData = () => {
         setLoading(true);
@@ -82,7 +90,7 @@ const App = () => {
     };
 
     const [form] = Form.useForm();
-    const onFinish = (values) => {
+    const onSearch = (values) => {
         values['domain_name'] = values['domain_name'] ? values['domain_name'].trim() : '';
         values['expire_dates'] = values['expire_dates'] ? values['expire_dates'].map((_) => _.format('YYYY-MM-DD 00:00:00')) : null;
         values['expire_dates'] = JSON.stringify(values['expire_dates']);
@@ -94,9 +102,30 @@ const App = () => {
             }
         });
     };
+    const export_data = () => {
+        setLoading(true);
+        let rows = data.map((_) => {
+            const domain = _['domain'];
+            return {
+                'domainName': domain['domainName'],
+                'expireDate': domain['expireDate'],
+                'createDate': domain['createDate'],
+                'platform': `${domain['platform']}(${domain['platformId']})`,
+            }
+        })
+        const header = ['domainName', 'expireDate', 'createDate', 'platform'];
+        const worksheet = XLSX.utils.json_to_sheet(rows, {header: header});
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "域名");
+        XLSX.utils.sheet_add_aoa(worksheet, [header], {origin: "A1"});
+        const max_width = rows.reduce((w, r) => Math.max(w, r.platform.length), 10);
+        worksheet["!cols"] = [{wch: max_width}, {wch: max_width}, {wch: max_width}, {wch: max_width}];
+        XLSX.writeFile(workbook, "域名.xlsx");
+        setLoading(false);
+    }
     return (
         <Space direction={'vertical'} size={'large'} style={{'width': '100%'}}>
-            <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
+            <Form form={form} name="horizontal_login" layout="inline" onFinish={onSearch}>
                 <Form.Item name="domain_name">
                     <Input placeholder="domainName"/>
                 </Form.Item>
@@ -104,12 +133,18 @@ const App = () => {
                     <DatePicker.RangePicker/>
                 </Form.Item>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" disabled={loading}>
                         Search
+                    </Button>
+                </Form.Item>
+                <Form.Item>
+                    <Button onClick={export_data} disabled={loading}>
+                        导出
                     </Button>
                 </Form.Item>
             </Form>
             <Table
+                sticky={{offsetHeader: 5,}}
                 columns={columns}
                 rowKey={(record) => record.domain.domainName}
                 dataSource={data}

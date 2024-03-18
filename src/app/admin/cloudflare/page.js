@@ -31,7 +31,14 @@ const columns = [
     {
         title: 'platform',
         dataIndex: 'platform',
-        render: (name, record) => record?.domain?.platform,
+        render: (name, record) => {
+            if (record?.domain) {
+                return <span>
+                    {record.domain.platform}<br/>
+                    ({record.domain.platformId})
+                </span>
+            }
+        },
     },
     {
         title: 'expireDate',
@@ -137,6 +144,7 @@ const App = () => {
                 onSearch={onSearch}
             />
             <Table
+                sticky={{offsetHeader: 5,}}
                 size={'small'}
                 columns={mergedColumns}
                 rowKey={(record) => record.zone.id}
