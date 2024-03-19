@@ -26,12 +26,12 @@ const items = [
         label: `Domains`,
         path: '/admin/domain',
     },
-    // {
-    //     key: '4',
-    //     icon: React.createElement(BarChartOutlined),
-    //     label: `test`,
-    //     path: '/admin/test',
-    // },
+    {
+        key: '4',
+        icon: <BarChartOutlined/>,
+        label: `accounts`,
+        path: '/admin/account',
+    },
 ]
 
 function find_path_key(path) {

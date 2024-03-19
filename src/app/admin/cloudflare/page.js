@@ -9,17 +9,17 @@ const columns = [
         title: 'Name',
         dataIndex: 'name',
         // sorter: true,
-        render: (name, record) => record?.zone?.name,
+        render: (_, record) => record?.zone?.name,
     },
     {
         title: 'cloudflare',
         dataIndex: 'account_name',
-        render: (name, record) => record?.zone?.account_name,
+        render: (_, record) => record?.zone?.account_name,
     },
     {
         title: 'name_servers',
         dataIndex: 'name_servers',
-        render: (name, record) => {
+        render: (_, record) => {
             let name_servers = record?.zone?.name_servers;
             if (Array.isArray(name_servers)) {
                 return name_servers.map((v, i) => (<div key={v}>{v}</div>))
@@ -31,7 +31,7 @@ const columns = [
     {
         title: 'platform',
         dataIndex: 'platform',
-        render: (name, record) => {
+        render: (_, record) => {
             if (record?.domain) {
                 return <span>
                     {record.domain.platform}<br/>
@@ -43,7 +43,7 @@ const columns = [
     {
         title: 'expireDate',
         dataIndex: 'expireDate',
-        render: (name, record) => record?.domain?.expireDate,
+        render: (_, record) => record?.domain?.expireDate,
     },
 ];
 const App = () => {

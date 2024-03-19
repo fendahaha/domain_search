@@ -101,9 +101,9 @@ const DomainExpiresCharts = () => {
     }, [options]);
     useEffect(() => {
         setLoading(true);
-        let expire_dates = get_date_range(15);
+        let expire_dates = get_date_range(30);
         _get('/polls/domain_expires/', {'expire_dates': JSON.stringify(expire_dates)}).then(d => {
-            let x_data = d.map((_) => dayjs(_.start).format('YYYY/MM/DD'));
+            let x_data = d.map((_) => dayjs(_.start).format('DD'));
             let y_data = d.map((_) => _.domains);
             set_x_data(x_data);
             set_y_data(y_data);
@@ -139,7 +139,7 @@ export default function Page() {
                 </Row>
                 <Row gutter={16}>
                     <Col span={24}>
-                        <Card title={"未来15天即将过期域名分布图"} bordered={false} hoverable>
+                        <Card title={"未来30天即将过期域名分布图"} bordered={false} hoverable>
                             <DomainExpiresCharts/>
                         </Card>
                     </Col>

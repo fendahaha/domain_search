@@ -8,12 +8,12 @@ const columns = [
     {
         title: 'Name',
         dataIndex: 'name',
-        render: (name, record) => record?.domain?.domainName,
+        render: (_, record) => record?.domain?.domainName,
     },
     {
         title: 'platform',
         dataIndex: 'platform',
-        render: (name, record) => {
+        render: (_, record) => {
             if (record?.domain) {
                 return <span>
                     {record.domain.platform}<br/>
@@ -25,7 +25,7 @@ const columns = [
     {
         title: 'locked',
         dataIndex: 'locked',
-        render: (name, record) => {
+        render: (_, record) => {
             const locked = record?.domain?.locked;
             if (locked === true) {
                 return 'Yes'
@@ -39,17 +39,17 @@ const columns = [
     {
         title: 'expireDate',
         dataIndex: 'expireDate',
-        render: (name, record) => record?.domain?.expireDate,
+        render: (_, record) => record?.domain?.expireDate,
     },
     {
         title: 'cloudflare',
         dataIndex: 'account_name',
-        render: (name, record) => record?.zone?.account_name,
+        render: (_, record) => record?.zone?.account_name,
     },
 ];
 const App = () => {
-    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
     const [tableParams, setTableParams] = useState({
         pagination: {
             current: 1,
