@@ -124,7 +124,7 @@ const App = () => {
         setLoading(false);
     }
     return (
-        <Space direction={'vertical'} size={'large'} style={{'width': '100%'}}>
+        <Space direction={'vertical'} size={'middle'} style={{'width': '100%'}}>
             <Form form={form} name="horizontal_login" layout="inline" onFinish={onSearch}>
                 <Form.Item name="domain_name">
                     <Input placeholder="domainName"/>
@@ -144,6 +144,7 @@ const App = () => {
                 </Form.Item>
             </Form>
             <Table
+                size={'small'}
                 sticky={{offsetHeader: 5,}}
                 columns={columns}
                 rowKey={(record) => record.domain.domainName}

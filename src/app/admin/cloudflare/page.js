@@ -1,8 +1,9 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import {Button, message, Popconfirm, Space, Table, Input} from 'antd';
-import {frontend} from "@/utils";
+import {Button, Flex, Input, message, Popconfirm, Space, Table, Tag} from 'antd';
+import {frontend, frontend_util} from "@/utils";
 import DnsRecords from "@/app/admin/cloudflare/dns_records";
+import ZoneCreateButton from "@/app/admin/cloudflare/zone_create_button";
 
 const columns = [
     {
@@ -26,6 +27,21 @@ const columns = [
             } else {
                 return name_servers
             }
+        },
+    },
+    {
+        title: 'status',
+        dataIndex: 'status',
+        width: 150,
+        render: (_, record) => {
+            const s = record?.zone?.status;
+            let mm = {
+                'active': <Tag bordered={true} color="success">active</Tag>,
+                'moved': <Tag bordered={true} color="error">moved</Tag>,
+                'initializing': <Tag bordered={true} color="orange">initializing</Tag>,
+                'pending': <Tag bordered={true} color="processing">pending</Tag>,
+            }
+            return mm[s] || s
         },
     },
     {
@@ -81,13 +97,30 @@ const App = () => {
                 setLoading(false);
             })
     };
+    const delete_zone = (record) => {
+        setEditingKey(record.zone.id);
+        setLoading(true);
+        frontend_util.postForm('/polls/cloudflare_zone_delete/', {zone_id: record.zone.id}).then(r => {
+            if (r) {
+                messageApi.success({content: 'success'});
+            } else {
+                messageApi.error({content: 'fail'});
+            }
+        }).finally(() => {
+            setEditingKey('');
+            setLoading(false);
+        })
+    }
     const edit_column = {
         title: 'Action',
         key: 'action',
         render: (_, record) => (
             <Space size="middle">
                 <Popconfirm title="Sure to clear?" onConfirm={() => edit(record)} disabled={editingKey !== ''}>
-                    <Button type="primary" danger>Clear Cache</Button>
+                    <Button type="primary" size={'small'}>Clear Cache</Button>
+                </Popconfirm>
+                <Popconfirm title="Sure to delete?" onConfirm={() => delete_zone(record)} disabled={editingKey !== ''}>
+                    <Button type="primary" size={'small'} danger>Delete</Button>
                 </Popconfirm>
             </Space>
         ),
@@ -134,15 +167,19 @@ const App = () => {
         });
     }
     return (
-        <Space direction={'vertical'} size={'large'} style={{'width': '100%'}}>
+        <Space direction={'vertical'} size={'middle'} style={{'width': '100%'}}>
             {contextHolder}
-            <Input.Search
-                placeholder="domainName"
-                allowClear
-                enterButton="Search"
-                size="large"
-                onSearch={onSearch}
-            />
+            <Flex justify={'flex-start'} align={'center'} gap={'middle'}>
+                <Input.Search
+                    placeholder="domainName"
+                    allowClear
+                    enterButton="Search"
+                    size="large"
+                    style={{width: '50%', minWidth: 200}}
+                    onSearch={onSearch}
+                />
+                <ZoneCreateButton/>
+            </Flex>
             <Table
                 sticky={{offsetHeader: 5,}}
                 size={'small'}
@@ -156,7 +193,6 @@ const App = () => {
                     rowExpandable: (record) => true,
                     expandedRowRender: (record) => {
                         return <DnsRecords zone_id={record.zone.id}/>
-                        // return <p style={{margin: 0,}}>{record.zone.name}</p>
                     },
                 }}
             />
