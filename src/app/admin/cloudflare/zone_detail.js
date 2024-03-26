@@ -18,6 +18,7 @@ import {
 import React, {useEffect, useMemo, useState} from "react";
 import {frontend_util} from "@/utils";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
+
 const RedirectRule = ({params}) => {
     const {key, name, restField, remove, record} = params
     return (
@@ -44,9 +45,9 @@ const RedirectRule = ({params}) => {
                 {...restField}
                 name={[name, 'expression']}
                 rules={[{required: true,},]}
-                initialValue={'true'}
+                initialValue={'All incoming requests'}
             >
-                <Input placeholder="" disabled style={{width: '80px'}}/>
+                <Input disabled style={{width: '80px'}}/>
             </Form.Item>
             <Form.Item
                 label="target_url"
@@ -106,6 +107,7 @@ const RedirectRules = ({zone_id}) => {
                 'preserve_query_string': from_value.preserve_query_string,
                 'status_code': from_value.status_code,
                 'target_url': from_value.target_url.value,
+                'expression': _.expression === 'true' ? 'All incoming requests' : _.expression,
             }
         })
     }, [ruleset_redirect]);
@@ -120,9 +122,15 @@ const RedirectRules = ({zone_id}) => {
     }, [rules])
     const onFinish = (values) => {
         setLoading(true);
+        let rules = values['rules'].map(_ => {
+            return {
+                ..._,
+                'expression': _.expression === 'All incoming requests' ? 'true' : _.expression
+            }
+        })
         let ruleset_obj = {
             ...ruleset_redirect,
-            rules: values['rules'],
+            rules: rules,
         }
         frontend_util.postJson('/polls/zone_ruleset_update/', {
             'zone_id': zone_id,
@@ -164,7 +172,8 @@ const RedirectRules = ({zone_id}) => {
                                 })}
                                 <Space size={'large'} style={{'display': 'flex', 'justifyContent': 'center'}}>
                                     <Form.Item>
-                                        <Button type="dashed" onClick={() => add()} block={false} icon={<PlusOutlined/>}>
+                                        <Button type="dashed" onClick={() => add()} block={false}
+                                                icon={<PlusOutlined/>}>
                                             Add field
                                         </Button>
                                     </Form.Item>
