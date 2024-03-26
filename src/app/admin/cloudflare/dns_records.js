@@ -88,7 +88,6 @@ export default function DnsRecords({zone_id}) {
         return frontend.get("/polls/dns_records_get", {'zone_id': zone_id})
             .then(res => res.ok ? res.json() : Promise.reject(false))
             .then(d => {
-                // console.log(d);
                 d = d.filter((_, idx) => dns_allowed_type.includes(_['type']))
                 setRecords(d);
                 form.setFieldsValue({records: d});
@@ -173,7 +172,7 @@ export default function DnsRecords({zone_id}) {
             {contextHolder}
             <Form
                 form={form}
-                name="dynamic_form_nest_item"
+                name="DnsRecords"
                 style={{width: '100%'}}
                 onFinish={onFinish}
                 autoComplete="off"

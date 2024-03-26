@@ -4,6 +4,7 @@ import {Button, Flex, Input, message, Popconfirm, Space, Table, Tag} from 'antd'
 import {frontend, frontend_util} from "@/utils";
 import DnsRecords from "@/app/admin/cloudflare/dns_records";
 import ZoneCreateButton from "@/app/admin/cloudflare/zone_create_button";
+import ZoneDetail from "@/app/admin/cloudflare/zone_detail";
 
 const columns = [
     {
@@ -119,9 +120,10 @@ const App = () => {
                 <Popconfirm title="Sure to clear?" onConfirm={() => edit(record)} disabled={editingKey !== ''}>
                     <Button type="primary" size={'small'}>Clear Cache</Button>
                 </Popconfirm>
-                <Popconfirm title="Sure to delete?" onConfirm={() => delete_zone(record)} disabled={editingKey !== ''}>
-                    <Button type="primary" size={'small'} danger>Delete</Button>
-                </Popconfirm>
+                {/*<Popconfirm title="Sure to delete?" onConfirm={() => delete_zone(record)} disabled={editingKey !== ''}>*/}
+                {/*    <Button type="primary" size={'small'} danger>Delete</Button>*/}
+                {/*</Popconfirm>*/}
+                <ZoneDetail zone_id={record?.zone?.id}/>
             </Space>
         ),
     };
