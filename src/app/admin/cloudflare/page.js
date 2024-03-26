@@ -134,7 +134,6 @@ const App = () => {
             .then(res => res.json())
             .then(({data, total}) => {
                 setData(data);
-                setLoading(false);
                 setTableParams({
                     ...tableParams,
                     pagination: {
@@ -142,7 +141,7 @@ const App = () => {
                         total: total,
                     },
                 });
-            })
+            }).finally(()=>setLoading(false));
     };
     useEffect(() => {
         fetchData();

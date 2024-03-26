@@ -47,7 +47,7 @@ const RedirectRule = ({params}) => {
                 rules={[{required: true,},]}
                 initialValue={'All incoming requests'}
             >
-                <Input disabled style={{width: '80px'}}/>
+                <Input disabled style={{width: '110px'}}/>
             </Form.Item>
             <Form.Item
                 label="target_url"
