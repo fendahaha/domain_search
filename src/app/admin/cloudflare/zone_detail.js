@@ -29,7 +29,7 @@ const RedirectRule = ({params}) => {
                 name={[name, 'description']}
                 rules={[{required: true,},]}
             >
-                <Input placeholder="" style={{width: '220px'}}/>
+                <Input placeholder="" style={{width: '200px'}}/>
             </Form.Item>
             <Form.Item
                 label="enabled"
@@ -47,7 +47,7 @@ const RedirectRule = ({params}) => {
                 rules={[{required: true,},]}
                 initialValue={'All incoming requests'}
             >
-                <Input disabled style={{width: '110px'}}/>
+                <Input disabled style={{width: '160px'}}/>
             </Form.Item>
             <Form.Item
                 label="target_url"
@@ -290,16 +290,94 @@ const PageRules = ({zone_id}) => {
         </Spin>
     )
 }
-const allowed_setting = ["always_use_https", "automatic_https_rewrites", "development_mode", "ssl"];
+
+
+const value1_options = ['on', 'off'];
+const value2_options = ['off', 'flexible', 'full', 'strict'];
+const allowed_setting = {
+    'always_use_https': value1_options,
+    'automatic_https_rewrites': value1_options,
+    'development_mode': value1_options,
+    'ssl': value2_options,
+};
+const SettingValueSelect = ({zone_id, id, value, value_options}) => {
+    const [v, setV] = useState(value);
+    const [messageApi, contextHolder] = message.useMessage();
+    const [loading, setLoading] = useState(false);
+    return (
+        <>
+            {contextHolder}
+            <Select options={value_options.map(_ => ({title: _, value: _}))}
+                    size={'small'}
+                    value={v}
+                    style={{width: 81}}
+                    loading={loading}
+                    onChange={(select_value) => {
+                        console.log(select_value);
+                        setLoading(true);
+                        frontend_util.postForm('/polls/cloudflare_zone_setting_change/', {
+                            zone_id,
+                            setting_id: id,
+                            value: select_value,
+                        }).then(r => {
+                            console.log(r);
+                            if (r) {
+                                setV(select_value);
+                                messageApi.success('success');
+                            } else {
+                                messageApi.error('success');
+                            }
+                        }).finally(() => {
+                            setLoading(false);
+                        })
+                    }}/>
+        </>
+    )
+}
+const SettingValueSwitch = ({zone_id, id, value, value_options}) => {
+    const [v, setV] = useState(value === value_options[0])
+    const [messageApi, contextHolder] = message.useMessage();
+    const [loading, setLoading] = useState(false);
+    return (
+        <>
+            {contextHolder}
+            <Switch defaultChecked
+                    checkedChildren={value_options[0]}
+                    unCheckedChildren={value_options[1]}
+                    checked={v}
+                    loading={loading}
+                    onChange={(checked) => {
+                        console.log(checked);
+                        setLoading(true);
+                        frontend_util.postForm('/polls/cloudflare_zone_setting_change/', {
+                            zone_id,
+                            setting_id: id,
+                            value: checked ? value_options[0] : value_options[1],
+                        }).then(r => {
+                            console.log(r);
+                            if (r) {
+                                setV(checked);
+                                messageApi.success('success');
+                            } else {
+                                messageApi.error('success');
+                            }
+                        }).finally(() => {
+                            setLoading(false);
+                        })
+                    }}/>
+        </>
+    )
+}
+
 const ZoneSettings = ({zone_id}) => {
     const [loading, setLoading] = useState(false);
     const [zone_settings, setZone_settings] = useState([]);
     useEffect(() => {
         setLoading(true);
         frontend_util.get('/polls/cloudflare_zone_settings/', {zone_id}).then(r => {
-            console.log(r);
             r = r.filter(_ => _.editable)
-            let r2 = r.filter(_ => allowed_setting.find(i => i === _.id));
+            let r2 = r.filter(_ => Object.keys(allowed_setting).find(i => i === _.id));
+            console.log(r2);
             setZone_settings(r2);
         }).finally(() => setLoading(false))
     }, []);
@@ -313,6 +391,16 @@ const ZoneSettings = ({zone_id}) => {
             title: 'value',
             dataIndex: 'value',
             width: '30%',
+            render: (text, record) => {
+                let value_options = allowed_setting[record.id];
+                if (value_options.length > 2) {
+                    return <SettingValueSelect zone_id={zone_id} id={record.id} value={record.value}
+                                               value_options={value_options}/>
+                } else {
+                    return <SettingValueSwitch zone_id={zone_id} id={record.id} value={record.value}
+                                               value_options={value_options}/>
+                }
+            }
         },
         {
             title: 'modified_on',

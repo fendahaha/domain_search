@@ -120,10 +120,10 @@ const App = () => {
                 <Popconfirm title="Sure to clear?" onConfirm={() => edit(record)} disabled={editingKey !== ''}>
                     <Button type="primary" size={'small'}>Clear Cache</Button>
                 </Popconfirm>
-                {/*<Popconfirm title="Sure to delete?" onConfirm={() => delete_zone(record)} disabled={editingKey !== ''}>*/}
-                {/*    <Button type="primary" size={'small'} danger>Delete</Button>*/}
-                {/*</Popconfirm>*/}
                 <ZoneDetail zone_id={record?.zone?.id}/>
+                <Popconfirm title="Sure to delete?" onConfirm={() => delete_zone(record)} disabled={editingKey !== ''}>
+                    <Button type="primary" size={'small'} danger disabled>Delete</Button>
+                </Popconfirm>
             </Space>
         ),
     };
