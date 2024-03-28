@@ -1,8 +1,10 @@
 'use client'
 import React, {useEffect, useState} from 'react';
-import {AntCloudOutlined, BarChartOutlined, GlobalOutlined,} from '@ant-design/icons';
-import {Layout, Menu, theme} from 'antd';
+import {AntCloudOutlined, BarChartOutlined, DownOutlined, GlobalOutlined, UserOutlined,} from '@ant-design/icons';
+import {Avatar, Dropdown, Flex, Layout, Menu, Space, Spin, theme} from 'antd';
 import {useRouter} from "next/navigation";
+import {useUser, withPageAuthRequired} from '@auth0/nextjs-auth0/client';
+import Loading from "@/components/Loading";
 
 const {Header, Content, Footer, Sider} = Layout;
 
@@ -48,6 +50,41 @@ function go_to_page(key, router) {
     router.push(item['path'])
 }
 
+const MyUser = () => {
+    const {user, error, isLoading} = useUser();
+    if (isLoading) {
+        return <Spin/>;
+    }
+    if (error) {
+        return <Avatar style={{color: 'red'}}>Error</Avatar>
+    }
+    return (
+        <>
+            {
+                user && (
+                    <Dropdown menu={{
+                        items: [
+                            {
+                                key: '1',
+                                label: <a href="/api/auth/logout">logout</a>,
+                            }
+                        ]
+                    }} arrow={true}>
+                        <a>
+                            <Space>
+                                <Avatar style={{backgroundColor: '#87d068',}} icon={<UserOutlined/>}
+                                        size={'default'} src={user.picture}/>
+                                {user.name}
+                                <DownOutlined/>
+                            </Space>
+                        </a>
+                    </Dropdown>
+                )
+            }
+        </>
+    )
+}
+
 const App = ({children}) => {
     const {
         token: {colorBgContainer, borderRadiusLG},
@@ -79,17 +116,15 @@ const App = ({children}) => {
                       }}
                 />
             </Sider>
-            <Layout
-                style={{
-                    marginLeft: 200,
-                }}
-            >
-                <Header
-                    style={{
-                        padding: 0,
-                        background: colorBgContainer,
-                    }}
-                />
+            <Layout style={{marginLeft: 200,}}>
+                <Header style={{padding: '0 10px', background: colorBgContainer}}>
+                    <Flex align={'center'} justify={'space-between'}>
+                        <div className={'left'}></div>
+                        <div className={'right'} style={{padding: '0 20px'}}>
+                            <MyUser/>
+                        </div>
+                    </Flex>
+                </Header>
                 <Content
                     style={{
                         margin: '24px 16px 0',
@@ -118,4 +153,8 @@ const App = ({children}) => {
         </Layout>
     );
 };
-export default App;
+// export default App;
+export default withPageAuthRequired(App, {
+    onRedirecting: () => <Loading/>,
+    onError: error => <div>{error.message}</div>
+});

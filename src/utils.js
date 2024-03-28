@@ -40,8 +40,11 @@ function postForm(url, data = null, headers = {}) {
 }
 
 function get(url, data = null, headers = {}) {
-    const queryString = new URLSearchParams(data).toString();
-    const urlWithParams = data !== null ? `${url}?${queryString}` : url;
+    let urlWithParams = url;
+    if (data) {
+        const queryString = new URLSearchParams(data).toString();
+        urlWithParams = `${url}?${queryString}`;
+    }
     return fetch(urlWithParams, {
         method: 'GET',
         redirect: "follow",
@@ -68,7 +71,6 @@ export const backend = {
     }
 }
 export const frontend = {
-    // prefix: 'https://api.domainsearch.fenda',
     prefix: process.env.NEXT_PUBLIC_API_PREFIX,
     get: function (url, data = null, headers = {}) {
         return get(this.prefix + url, data, headers)
